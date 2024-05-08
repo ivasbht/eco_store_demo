@@ -1,3 +1,4 @@
+import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -9,6 +10,17 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Future.delayed(
+      Duration(seconds: 2),
+      () {
+        Navigator.pushReplacementNamed(context, AppRoutes.home_screen);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
