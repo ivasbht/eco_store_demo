@@ -3,7 +3,10 @@ import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dar
 import 'package:eco_store_demo/UI/widgets_collection/custom_textfield_widget/custom_textfield_widget.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
 import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
+import 'package:eco_store_demo/store/home_page_store/home_page_bloc/home_page_bloc.dart';
+import 'package:eco_store_demo/store/home_page_store/home_page_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -67,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildSearchBar(),
+            _buildProductList(),
           ],
         ),
       ),
@@ -90,6 +94,33 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
           size: 30,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+      ),
+    );
+  }
+
+  Widget _buildProductList() {
+    return Container(
+      margin: EdgeInsets.only(
+        top: screenHeight*0.05,
+      ),
+      child: BlocProvider(
+        create: (context) => HomePageBloc(),
+        child: BlocBuilder<HomePageBloc, HomePageStore>(
+          builder: (ctxt, store) {
+            // if(){
+              
+            // }
+            return _buildErrorText();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorText() {
+    return Center(
+      child: CustomText(
+        text: "Error",
       ),
     );
   }
