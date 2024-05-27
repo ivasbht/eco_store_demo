@@ -3,8 +3,8 @@ import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dar
 import 'package:eco_store_demo/UI/widgets_collection/custom_textfield_widget/custom_textfield_widget.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
 import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
-import 'package:eco_store_demo/store/home_page_store/home_page_bloc/home_page_bloc.dart';
-import 'package:eco_store_demo/store/home_page_store/home_page_state/home_page_state.dart';
+import 'package:eco_store_demo/services/app_service/app_service.dart';
+import 'package:eco_store_demo/store/home_page_bloc/home_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,6 +16,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SizeMixin {
+
+  final appServices =  AppServices();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -104,17 +107,17 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
         top: screenHeight * 0.05,
       ),
       child: BlocProvider(
-        create: (context) => HomePageBloc(),
+        create: (context) => HomePageBloc(service: appServices)..add(const HomeApiCallEvent()),
         child: BlocBuilder<HomePageBloc, HomePageState>(
           builder: (ctxt, state) {
-            if (state == HomePageState.initializing) {
+            if (state.status == HomeStatus.initializing) {
               return _buildTextMessage(message: 'initialize');
-            } else if (state == HomePageState.loading) {
+            } else if (state.status == HomeStatus.loading) {
               return _buildTextMessage(message: 'loading');
-            } else if (state == HomePageState.completed) {
+            } else if (state.status == HomeStatus.completed) {
               return _buildTextMessage(message: 'result');
             } else {
-              return _buildTextMessage(message: 'Error');
+              return _buildTextMessage(message: 'Error \n\n${state.error}');
             }
           },
         ),
@@ -126,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
     return Center(
       child: CustomText(
         text: "$message",
+        textAlign: TextAlign.center,
       ),
     );
   }
