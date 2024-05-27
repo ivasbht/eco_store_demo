@@ -1,14 +1,24 @@
 import 'package:bloc/bloc.dart';
-import 'package:eco_store_demo/store/home_page_store/home_page_store.dart';
+import 'package:eco_store_demo/model/product_model/product_model.dart';
+import 'package:eco_store_demo/store/home_page_store/home_page_events/home_page_events.dart';
+import 'package:eco_store_demo/store/home_page_store/home_page_state/home_page_state.dart';
+import 'package:eco_store_demo/services/app_service/app_service.dart';
 
-sealed class HomePageEvents {}
+class HomePageBloc extends Bloc<HomePageEvents, HomePageState> {
+  AppServices service = AppServices();
+  HomePageBloc() : super(HomePageState.initial()){
+    _getAllProducts();
+  }
 
-// Events Created
-final class HomePageInitiate extends HomePageEvents {}
+  List<ProductModel> products = [];
 
-final class HomePageError extends HomePageEvents {}
-//
+  Future<void> _getAllProducts() async {
+    state = HomePageState.loading;
+    final response = await service.getProducts();
+    final data = response.data;
 
-class HomePageBloc extends Bloc<HomePageEvents, HomePageStore> {
-  HomePageBloc() : super(HomePageStore());
+    (data as List<Map<String, dynamic>>).forEach((json) {
+      products.add(ProductModel.fromJson(json));
+    });
+  }
 }

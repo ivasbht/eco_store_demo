@@ -4,7 +4,7 @@ import 'package:eco_store_demo/UI/widgets_collection/custom_textfield_widget/cus
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
 import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
 import 'package:eco_store_demo/store/home_page_store/home_page_bloc/home_page_bloc.dart';
-import 'package:eco_store_demo/store/home_page_store/home_page_store.dart';
+import 'package:eco_store_demo/store/home_page_store/home_page_state/home_page_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -101,26 +101,31 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
   Widget _buildProductList() {
     return Container(
       margin: EdgeInsets.only(
-        top: screenHeight*0.05,
+        top: screenHeight * 0.05,
       ),
       child: BlocProvider(
         create: (context) => HomePageBloc(),
-        child: BlocBuilder<HomePageBloc, HomePageStore>(
-          builder: (ctxt, store) {
-            // if(){
-              
-            // }
-            return _buildErrorText();
+        child: BlocBuilder<HomePageBloc, HomePageState>(
+          builder: (ctxt, state) {
+            if (state == HomePageState.initializing) {
+              return _buildTextMessage(message: 'initialize');
+            } else if (state == HomePageState.loading) {
+              return _buildTextMessage(message: 'loading');
+            } else if (state == HomePageState.completed) {
+              return _buildTextMessage(message: 'result');
+            } else {
+              return _buildTextMessage(message: 'Error');
+            }
           },
         ),
       ),
     );
   }
 
-  Widget _buildErrorText() {
+  Widget _buildTextMessage({String message = "Message"}) {
     return Center(
       child: CustomText(
-        text: "Error",
+        text: "$message",
       ),
     );
   }
