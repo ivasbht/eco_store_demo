@@ -185,6 +185,7 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
               return ProductDetailSheet(
                 screenSize: screenSize,
                 product: prodState.productDetails!,
+                onAddToCart: (){},
               );
             } else {
               return _buildTextMessage(message: 'Error \n\n${prodState.error}');

@@ -5,17 +5,19 @@ import 'package:flutter/material.dart';
 class ProductDetailSheet extends StatelessWidget {
   final Size screenSize;
   final ProductModel product;
+  final void Function()? onAddToCart;
   ProductDetailSheet({
     super.key,
     required this.screenSize,
     required this.product,
+    this.onAddToCart,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: screenSize.width,
-      height: screenSize.height * 0.9,
+      height: screenSize.height * 0.95,
       child: _buildContent(),
     );
   }
@@ -31,6 +33,7 @@ class ProductDetailSheet extends StatelessWidget {
               _buildProductRating(),
               _buildPricing(),
               _buildProductDescription(),
+              _buildAddToCartButton(),
             ],
           ),
         ],
@@ -130,6 +133,29 @@ class ProductDetailSheet extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddToCartButton() {
+    return Container(
+      margin: EdgeInsets.only(
+        top: screenSize.height * 0.05,
+        bottom: screenSize.height * 0.05,
+      ),
+      child: TextButton(
+        onPressed: onAddToCart,
+        style: TextButton.styleFrom(
+            backgroundColor: Colors.blueGrey,
+            fixedSize: Size(
+              screenSize.width * 0.8,
+              screenSize.height * 0.1,
+            )),
+        child: CustomText(
+          text: "Add To Cart",
+          color: Colors.white,
+          fontSize: 18,
+        ),
       ),
     );
   }
