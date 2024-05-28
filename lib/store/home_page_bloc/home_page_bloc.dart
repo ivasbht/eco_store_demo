@@ -65,6 +65,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     try {
       final response = await service.getSingleProducts(event.prodId);
       if (response.statusCode == 200) {
+        print("${response.data}");
         productDetails = ProductModel.fromJson(response.data);
         emit(
           state.copyWith(

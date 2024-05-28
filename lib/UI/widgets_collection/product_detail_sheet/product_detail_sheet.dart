@@ -15,18 +15,24 @@ class ProductDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: screenSize.width,
-      height: screenSize.height,
+      height: screenSize.height * 0.9,
       child: _buildContent(),
     );
   }
 
   Widget _buildContent() {
-    return Container(
+    return SingleChildScrollView(
       child: Column(
         children: [
           _buildProductImage(product),
-          _buildProductName(),
-          _buildPricing(),
+          Column(
+            children: [
+              _buildProductName(),
+              _buildProductRating(),
+              _buildPricing(),
+              _buildProductDescription(),
+            ],
+          ),
         ],
       ),
     );
@@ -34,15 +40,20 @@ class ProductDetailSheet extends StatelessWidget {
 
   Widget _buildProductImage(ProductModel prodModel) {
     return Container(
-      width: screenSize.width * 0.25,
-      height: screenSize.height * 0.25,
+      width: screenSize.width * 0.85,
+      height: screenSize.height * 0.45,
       margin: EdgeInsets.symmetric(
-        vertical: screenSize.height * 0.01,
+        vertical: screenSize.height * 0.025,
+        horizontal: screenSize.width * 0.025,
       ),
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(
+          color: Colors.blueGrey,
+        ),
         image: DecorationImage(
           image: NetworkImage(prodModel.image ?? ""),
-          fit: BoxFit.fitWidth,
+          fit: BoxFit.contain,
         ),
       ),
     );
@@ -50,26 +61,75 @@ class ProductDetailSheet extends StatelessWidget {
 
   Widget _buildProductName() {
     return Container(
-      alignment: Alignment.topCenter,
+      alignment: Alignment.topLeft,
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
-        text: "${product.title ?? "Name Not Available"}",
-        fontSize: 12,
+        text: "${product.title ?? "Name Not Available"} ",
+        fontSize: 16,
         fontWeight: FontWeight.bold,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.left,
+        textSpans: [
+          TextSpan(
+            text: "\n(${product.category})",
+            style: TextStyle(
+              color: Colors.blueGrey,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildPricing() {
     return Container(
-      alignment: Alignment.topCenter,
-      padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+      alignment: Alignment.topLeft,
+      padding: EdgeInsets.symmetric(
+        vertical: screenSize.height * 0.035,
+        horizontal: screenSize.width * 0.05,
+      ),
       child: CustomText(
-        text: "\n \$ " + "${product.price ?? "N/A"}",
-        fontSize: 18,
+        text: "Price \$" + "${product.price ?? "N/A"}",
+        fontSize: 14,
         fontWeight: FontWeight.bold,
         textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildProductDescription() {
+    return Container(
+      alignment: Alignment.topLeft,
+      padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+      child: CustomText(
+        text: "${product.description ?? "Description Not Available"}",
+        fontSize: 14,
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
+
+  Widget _buildProductRating() {
+    return Container(
+      alignment: Alignment.topLeft,
+      padding: EdgeInsets.symmetric(
+        horizontal: screenSize.width * 0.05,
+        vertical: screenSize.height * 0.01,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.star),
+          CustomText(
+            text: "${product.rating["rate"] ?? ""}",
+            fontSize: 14,
+            textAlign: TextAlign.left,
+            color: Colors.blueGrey,
+            textSpans: [
+              TextSpan(
+                text: " (${product.rating["count"] ?? ""})",
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

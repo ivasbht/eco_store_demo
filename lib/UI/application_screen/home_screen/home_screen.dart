@@ -171,11 +171,8 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
   void _showProductDetailSheet() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (_) {
-        // prodState.copyWith(
-        //   productDetails: null,
-        //   productStatus: ProductDetailStatus.initializing,
-        // );
         return BlocBuilder<HomePageBloc, HomePageState>(
           bloc: _homePageBloc,
           builder: (context, prodState) {
@@ -195,6 +192,11 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
           },
         );
       },
-    );
+    )..whenComplete(() {
+        _homePageBloc.state.copyWith(
+          productDetails: null,
+          productStatus: ProductDetailStatus.initializing,
+        );
+    });
   }
 }
