@@ -2,33 +2,21 @@ import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dar
 import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:flutter/material.dart';
 
-class ProductsElement extends StatelessWidget {
-  final ProductModel? model;
-  final void Function()? onPressProduct;
+class ProductDetailSheet extends StatelessWidget {
   final Size screenSize;
-  const ProductsElement({
+  final ProductModel product;
+  ProductDetailSheet({
     super.key,
     required this.screenSize,
-    this.model,
-    this.onPressProduct,
+    required this.product,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressProduct,
-      child: Container(
-        width: screenSize.width * 0.4,
-        height: screenSize.height * 0.45,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            width: 1.25,
-            color: Colors.blueGrey,
-          ),
-        ),
-        child: _buildContent(),
-      ),
+    return Container(
+      width: screenSize.width,
+      height: screenSize.height,
+      child: _buildContent(),
     );
   }
 
@@ -36,7 +24,7 @@ class ProductsElement extends StatelessWidget {
     return Container(
       child: Column(
         children: [
-          _buildProductImage(model!),
+          _buildProductImage(product),
           _buildProductName(),
           _buildPricing(),
         ],
@@ -65,7 +53,7 @@ class ProductsElement extends StatelessWidget {
       alignment: Alignment.topCenter,
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
-        text: "${model?.title ?? "Name Not Available"}",
+        text: "${product.title ?? "Name Not Available"}",
         fontSize: 12,
         fontWeight: FontWeight.bold,
         textAlign: TextAlign.center,
@@ -78,7 +66,7 @@ class ProductsElement extends StatelessWidget {
       alignment: Alignment.topCenter,
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
-        text: "\n \$ " + "${model?.price ?? "N/A"}",
+        text: "\n \$ " + "${product.price ?? "N/A"}",
         fontSize: 18,
         fontWeight: FontWeight.bold,
         textAlign: TextAlign.center,

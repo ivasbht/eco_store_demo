@@ -7,6 +7,11 @@ abstract class HomePageEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class HomeApiCallEvent extends HomePageEvent {
-  const HomeApiCallEvent();
+class HomeProductListCallEvent extends HomePageEvent {
+  const HomeProductListCallEvent();
+}
+
+class HomeProductDetailCallEvent extends HomePageEvent {
+  final String prodId;
+  const HomeProductDetailCallEvent(this.prodId);
 }
