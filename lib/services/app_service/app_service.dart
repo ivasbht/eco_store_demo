@@ -2,7 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:eco_store_demo/services/core_service/dio_service/dio_service.dart';
 
 class AppServices extends  DioService {
-  Future<Response> getProducts({int limit = 10, bool sortDesc = true}) async {
+
+  final userId = 1; // for demo purpose until login is made
+  final id = 1;
+
+  Future<Response> getProducts({int limit = 20, bool sortDesc = true}) async {
     final _response = await dio
         .get("/products?limit=$limit&sort=${sortDesc ? "desc" : "asc"}");
     return _response;
@@ -22,4 +26,15 @@ class AppServices extends  DioService {
     final _response = await dio.get("/products/categories/$categoryName");
     return _response;
   }
+
+  Future<Response> getUserCartList() async {
+    final _response = await dio.get("/carts/user/$id");
+    return _response;
+  }
+
+  Future<Response> updateUserCartList() async {
+    final _response = await dio.get("/carts/user/$id");
+    return _response;
+  }
+
 }

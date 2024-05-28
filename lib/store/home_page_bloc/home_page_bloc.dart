@@ -14,10 +14,6 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     on<HomeProductDetailCallEvent>(_getProductDetail);
   }
 
-  List<ProductModel> products = [];
-
-  ProductModel? productDetails;
-
   Future<void> _getAllProducts(
     HomeProductListCallEvent event,
     Emitter<HomePageState> emit,
@@ -28,6 +24,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       if (response.statusCode == 200) {
         // print("Data Type : ${response.data.runtimeType} \n");
         final data = response.data;
+        final List<ProductModel> products = [];
 
         (data as List).forEach((json) {
           // print("\n $json");
@@ -67,7 +64,7 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
       if (response.statusCode == 200) {
         // print("${response.data}");
         // throw "Product cant be processed";
-        productDetails = ProductModel.fromJson(response.data);
+        final productDetails = ProductModel.fromJson(response.data);
         emit(
           state.copyWith(
             productStatus: ProductDetailStatus.completed,

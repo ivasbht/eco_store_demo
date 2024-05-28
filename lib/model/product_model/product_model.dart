@@ -6,6 +6,7 @@ class ProductModel {
   final category;
   final image;
   final rating;
+  int quanitiy;
 
   ProductModel({
     this.id,
@@ -15,6 +16,7 @@ class ProductModel {
     this.category,
     this.image,
     this.rating,
+    this.quanitiy = 0,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
