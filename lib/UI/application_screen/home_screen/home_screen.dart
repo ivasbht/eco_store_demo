@@ -2,7 +2,9 @@ import 'package:eco_store_demo/UI/widgets_collection/custom_drawer/custom_drawer
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
 import 'package:eco_store_demo/UI/widgets_collection/custom_textfield_widget/custom_textfield_widget.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
+import 'package:eco_store_demo/UI/widgets_collection/products_element/products_element.dart';
 import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
+import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:eco_store_demo/services/app_service/app_service.dart';
 import 'package:eco_store_demo/store/home_page_bloc/home_page_bloc.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SizeMixin {
-
-  final appServices =  AppServices();
+  final appServices = AppServices();
 
   @override
   void didChangeDependencies() {
@@ -73,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildSearchBar(),
-            _buildProductList(),
+            _buildProductComponent(),
           ],
         ),
       ),
@@ -101,25 +102,29 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
     );
   }
 
-  Widget _buildProductList() {
-    return Container(
-      margin: EdgeInsets.only(
-        top: screenHeight * 0.05,
-      ),
-      child: BlocProvider(
-        create: (context) => HomePageBloc(service: appServices)..add(const HomeApiCallEvent()),
-        child: BlocBuilder<HomePageBloc, HomePageState>(
-          builder: (ctxt, state) {
-            if (state.status == HomeStatus.initializing) {
-              return _buildTextMessage(message: 'initialize');
-            } else if (state.status == HomeStatus.loading) {
-              return _buildTextMessage(message: 'loading');
-            } else if (state.status == HomeStatus.completed) {
-              return _buildTextMessage(message: 'result');
-            } else {
-              return _buildTextMessage(message: 'Error \n\n${state.error}');
-            }
-          },
+  Widget _buildProductComponent() {
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.only(
+          top: screenHeight * 0.05,
+        ),
+        child: BlocProvider(
+          create: (context) =>
+              HomePageBloc(service: appServices)..add(HomeApiCallEvent()),
+          child: BlocBuilder<HomePageBloc, HomePageState>(
+            builder: (ctxt, state) {
+              if (state.status == HomeStatus.initializing) {
+                return _buildTextMessage(message: 'initialize');
+              } else if (state.status == HomeStatus.loading) {
+                return _buildTextMessage(message: 'loading');
+              } else if (state.status == HomeStatus.completed) {
+                return _buildProductList(state.productModels??[]);
+                // _buildTextMessage(message: 'result');
+              } else {
+                return _buildTextMessage(message: 'Error \n\n${state.error}');
+              }
+            },
+          ),
         ),
       ),
     );
@@ -130,6 +135,25 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
       child: CustomText(
         text: "$message",
         textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildProductList(List<ProductModel> productsList) {
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Wrap(
+          spacing: screenWidth*0.035,
+          runSpacing: screenHeight*0.025,
+          children: [
+            ...productsList.map((product) {
+              return ProductsElement(
+                screenSize: screenSize,
+                model: product,
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
