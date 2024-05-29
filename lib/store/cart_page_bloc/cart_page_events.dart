@@ -10,3 +10,9 @@ abstract class CartPageEvent extends Equatable {
 class CartApiCallEvent extends CartPageEvent {
   const CartApiCallEvent();
 }
+
+
+class CartProductApiCallEvent extends CartPageEvent {
+  final CartModel cartModel;
+  const CartProductApiCallEvent(this.cartModel);
+}
