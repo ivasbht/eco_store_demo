@@ -47,7 +47,9 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.cart_screen);
+            },
             icon: Icon(Icons.shopping_cart_outlined),
           )
         ],
@@ -145,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
   }
 
   Widget _buildProductList() {
-    ;
     final productsList = _homePageBloc.state.productModels ?? [];
     return SingleChildScrollView(
       child: Wrap(

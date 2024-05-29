@@ -66,21 +66,26 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     try {
       //
       //
-      await Future.forEach(event.cartModel.products, (prod) async {
-        final response = await service.getSingleProducts(prod.productId);
+      // await Future.forEach(event.cartModel.products, (prod) async {
+      //   final response = await service.getSingleProducts(prod.productId.toString());
+      //   if (response.statusCode == 200) {
+      //     final productAdd = ProductModel.fromJson(response.data);
+      //     print(prod.toString());
+      //     productAdd.quanitiy = int.tryParse(prod.quantity.toString()) ?? 0;
+      //     products.add(productAdd);
+      //   }
+      // });
+       for (ProductInCartModel prod in event.cartModel.products)  {
+        final response = await service.getSingleProducts(prod.productId.toString());
         if (response.statusCode == 200) {
-          products.add(ProductModel.fromJson(response.data)
-            ..quanitiy = int.tryParse(prod.quantity.toString()) ?? 0);
-        } else {
-          emit(
-            state.copyWith(
-              cartProdStatus: CartProductStatus.error,
-              error: response.statusMessage,
-            ),
-          );
+          final productAdd = ProductModel.fromJson(response.data);
+          print(prod.toString());
+          productAdd.quanitiy = int.tryParse(prod.quantity.toString()) ?? 0;
+          products.add(productAdd);
         }
-      });
+      }
       //
+      print("Complete");
       emit(
         state.copyWith(
           cartProdStatus: CartProductStatus.completed,
@@ -91,6 +96,7 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
       //
       //
     } catch (error) {
+      print(error.toString());
       emit(
         state.copyWith(
           cartProdStatus: CartProductStatus.error,

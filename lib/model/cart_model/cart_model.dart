@@ -44,4 +44,10 @@ class ProductInCartModel {
       quantity: json['quantity'],
     );
   }
+
+  @override
+  String toString() {
+    
+    return [productId,quantity].toString();
+  }
 }

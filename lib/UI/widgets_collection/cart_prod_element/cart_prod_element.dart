@@ -2,11 +2,11 @@ import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dar
 import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:flutter/material.dart';
 
-class ProductsElement extends StatelessWidget {
+class CartProdElement extends StatelessWidget {
   final ProductModel? model;
   final void Function()? onPressProduct;
   final Size screenSize;
-  const ProductsElement({
+  const CartProdElement({
     super.key,
     required this.screenSize,
     this.model,
@@ -18,7 +18,7 @@ class ProductsElement extends StatelessWidget {
     return InkWell(
       onTap: onPressProduct,
       child: Container(
-        width: screenSize.width * 0.4,
+        width: screenSize.width * 0.8,
         height: screenSize.height * 0.45,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
