@@ -15,8 +15,7 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     on<CartProductApiCallEvent>(_getCartProductList);
   }
 
-  CartModel? cartDetails;
-  List<ProductModel> products = [];
+  List<CartModel> cartDetails = [];
 
   Future<void> _getCartDetails(
     CartApiCallEvent event,
@@ -30,14 +29,16 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
         // print("Data Type : ${response.data.runtimeType} \n");
         final data = response.data;
         // print("\n $data");
-        cartDetails = CartModel.fromJson(data);
+        (data as List).forEach((cart) {
+          cartDetails.add(CartModel.fromJson(cart));
+        });
 
         // final List<ProductModel> products = [];
 
         emit(
           state.copyWith(
             status: CartStatus.completed,
-            cart: cartDetails,
+            cartDetails: cartDetails,
           ),
         );
         event.callProduct();
@@ -63,34 +64,59 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     CartProductApiCallEvent event,
     Emitter<CartPageState> emit,
   ) async {
-    products.clear();
     emit(
       state.copyWith(
         cartProdStatus: CartProductStatus.loading,
-        cartProducts: [],
       ),
     );
     try {
       //
       //
-      await Future.forEach<ProductInCartModel>(event.cartModel.products,
-          (prod) async {
-        final response =
-            await service.getSingleProducts(prod.productId.toString());
-        if (response.statusCode == 200) {
-          final productAdd = ProductModel.fromJson(response.data);
-          print(prod.toString());
-          productAdd.quanitiy = int.tryParse(prod.quantity.toString()) ?? 0;
-          products.add(productAdd);
-        }
-      });
-      //
-      print("Complete");
+      String prodId = "";
+      int quantity = 0;
+      ProductModel productAdd;
+
+      for (CartModel cart in event.cartModel) {
+        // for (ProductModel productInCart in cart.products)
+          for (int i = 0; i < cart.products.length; i++) {
+            ProductModel productInCart = cart.products[0];
+            prodId = productInCart.id.toString();
+            quantity = int.tryParse(productInCart.quanitity.toString()) ?? 0;
+            final response = await service.getSingleProducts(prodId);
+            if (response.statusCode == 200) {
+              print("\nData: " + response.data.toString());
+              productInCart = ProductModel.fromJson(response.data);
+              print("Product: " + productInCart.toString());
+              // productInCart = productAdd;
+              productInCart.quanitity = quantity;
+              print("\nResult: " + productInCart.toString());
+              print("\Cart: " + cart.products.toString());
+              print('-------------------------------------------------');
+            }
+          }
+      }
+
+      // await Future.forEach(event.cartModel, (cart) async {
+      //   await Future.forEach(cart.products, (productInCart) async {
+      //     prodId = productInCart.id.toString();
+      //     quantity = int.tryParse(productInCart.quanitity.toString()) ?? 0;
+      //     final response = await service.getSingleProducts(prodId);
+      //     if (response.statusCode == 200) {
+      //       print("\nData: " + response.data.toString());
+      //       productAdd = ProductModel.fromJson(response.data);
+      //       print("Product: " + productInCart.toString());
+      //       productInCart = productAdd;
+      //       productInCart.quanitity = quantity;
+      //       print("\nResult: " + productInCart.toString());
+      //       print("\Cart: " + cart.products.toString());
+      //       print('-------------------------------------------------');
+      //     }
+      //   });
+      // });
       emit(state.copyWith(
         cartProdStatus: CartProductStatus.completed,
-        cartProducts: products,
+        cartDetails: cartDetails,
       ));
-      // print(state.props.toString());
       //
       //
     } catch (error) {

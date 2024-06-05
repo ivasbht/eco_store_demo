@@ -28,11 +28,11 @@ class AppServices extends  DioService {
   }
 
   Future<Response> getUserCartList() async {
-    final _response = await dio.get("/carts/$id");
+    final _response = await dio.get("/carts/user/$userId");
     return _response;
   }
 
-  Future<Response> updateUserCartList() async {
+  Future<Response> updateUserCartList(String id) async {
     final _response = await dio.put("/carts/user/$id");
     return _response;
   }

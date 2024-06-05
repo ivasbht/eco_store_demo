@@ -1,8 +1,10 @@
+import 'package:eco_store_demo/model/product_model/product_model.dart';
+
 class CartModel {
   final id;
   final userId;
   final date;
-  final List<ProductInCartModel> products;
+  List<ProductModel> products;
 
   CartModel({
     this.id,
@@ -12,10 +14,13 @@ class CartModel {
   });
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
-    final List<ProductInCartModel> productLocal = [];
+    final List<ProductModel> productLocal = [];
     try {
       (json["products"] as List).forEach((prodQuantity) {
-        productLocal.add(ProductInCartModel.fromJson(prodQuantity));
+        productLocal.add(ProductModel(
+          id: prodQuantity['productId'],
+          quanitity: int.tryParse(prodQuantity['quantity'].toString()) ?? 0,
+        ));
       });
     } catch (_) {}
     //
@@ -26,28 +31,5 @@ class CartModel {
       date: json['date'],
       products: productLocal,
     );
-  }
-}
-
-class ProductInCartModel {
-  final productId;
-  final quantity;
-
-  ProductInCartModel({
-    this.productId,
-    this.quantity,
-  });
-
-  factory ProductInCartModel.fromJson(Map<String, dynamic> json) {
-    return ProductInCartModel(
-      productId: json['productId'],
-      quantity: json['quantity'],
-    );
-  }
-
-  @override
-  String toString() {
-    
-    return [productId,quantity].toString();
   }
 }

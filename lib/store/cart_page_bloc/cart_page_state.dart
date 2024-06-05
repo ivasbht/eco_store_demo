@@ -17,43 +17,38 @@ enum CartProductStatus {
 class CartPageState extends Equatable {
   final CartStatus status;
   final CartProductStatus cartProdStatus;
-  final CartModel? cart;
-  final List<ProductModel>? cartProducts;
+  final List<CartModel>? cartDetails;
   final dynamic error;
 
   const CartPageState({
     required this.status,
     required this.cartProdStatus,
-    this.cart,
-    this.cartProducts = const [],
+    this.cartDetails,
     this.error,
   });
 
   static CartPageState initial() => const CartPageState(
         cartProdStatus: CartProductStatus.initializing,
         status: CartStatus.initializing,
-        cartProducts: null,
-        cart: null,
+        cartDetails: null,
         error: null,
       );
 
   CartPageState copyWith({
     CartStatus? status,
     CartProductStatus? cartProdStatus,
-    CartModel? cart,
-    List<ProductModel>? cartProducts,
+    List<CartModel>? cartDetails,
     dynamic error,
   }) {
     return CartPageState(
       status: status ?? this.status,
       cartProdStatus: cartProdStatus ?? this.cartProdStatus,
-      cart: cart ?? this.cart,
-      cartProducts: cartProducts ?? this.cartProducts,
+      cartDetails: cartDetails ?? this.cartDetails,
       error: error ?? this.error,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, cartProdStatus, cart, cartProducts, error];
+      [status, cartProdStatus, cartDetails, error];
 }

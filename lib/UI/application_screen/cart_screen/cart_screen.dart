@@ -2,6 +2,7 @@ import 'package:eco_store_demo/UI/widgets_collection/cart_prod_element/cart_prod
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
 import 'package:eco_store_demo/UI/widgets_collection/custom_textfield_widget/custom_textfield_widget.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
+import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:eco_store_demo/services/app_service/app_service.dart';
 import 'package:eco_store_demo/store/cart_page_bloc/cart_page_bloc.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,8 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
   void initState() {
     _cartPageBloc = CartPageBloc(service: appServices)
       ..add(CartApiCallEvent(() {
-        _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
+        _cartPageBloc
+          ..add(CartProductApiCallEvent(_cartPageBloc.state.cartDetails!));
       }));
     // Future.delayed(Duration(seconds: 1),(){
     //   _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
@@ -55,7 +57,9 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
         actions: [
           IconButton(
             onPressed: () {
-              _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
+              _cartPageBloc
+                ..add(
+                    CartProductApiCallEvent(_cartPageBloc.state.cartDetails!));
             },
             icon: Icon(Icons.refresh),
           ),
@@ -152,21 +156,30 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
   }
 
   Widget _buildCartProductList() {
-    final productsList = _cartPageBloc.state.cartProducts ?? [];
+    final cartDetails = _cartPageBloc.state.cartDetails ?? [];
+
     return SingleChildScrollView(
-      child: Wrap(
-        spacing: screenWidth * 0.035,
-        runSpacing: screenHeight * 0.025,
+      child: Column(
         children: [
-          ...productsList.map((product) {
-            return CartProdElement(
-              screenSize: screenSize,
-              model: product,
-              onPressProduct: () {},
-            );
-          }),
+          ...cartDetails.map((cart) {
+            return _buildProductSpreader(cart.products);
+          }).toList(),
         ],
       ),
+    );
+  }
+
+  Widget _buildProductSpreader(List<ProductModel> products) {
+    return Column(
+      children: [
+        ...products.map((product) {
+          return CartProdElement(
+            screenSize: screenSize,
+            model: product,
+            onPressProduct: () {},
+          );
+        }),
+      ],
     );
   }
 }
