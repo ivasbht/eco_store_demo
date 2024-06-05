@@ -40,6 +40,7 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
             cart: cartDetails,
           ),
         );
+        event.callProduct();
       } else {
         emit(
           state.copyWith(
@@ -62,7 +63,13 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     CartProductApiCallEvent event,
     Emitter<CartPageState> emit,
   ) async {
-    emit(state.copyWith(cartProdStatus: CartProductStatus.loading));
+    products.clear();
+    emit(
+      state.copyWith(
+        cartProdStatus: CartProductStatus.loading,
+        cartProducts: [],
+      ),
+    );
     try {
       //
       //

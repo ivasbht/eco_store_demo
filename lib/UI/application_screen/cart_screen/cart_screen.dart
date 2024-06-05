@@ -20,9 +20,16 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
 
   @override
   void initState() {
-    _cartPageBloc = CartPageBloc(service: appServices)..add(CartApiCallEvent());
+    _cartPageBloc = CartPageBloc(service: appServices)
+      ..add(CartApiCallEvent(() {
+        _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
+      }));
+    // Future.delayed(Duration(seconds: 1),(){
+    //   _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
+    // });
     super.initState();
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -45,6 +52,14 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
           color: Colors.white,
         ),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
+            },
+            icon: Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: Container(
         alignment: Alignment.topCenter,
@@ -94,13 +109,14 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
           bloc: _cartPageBloc,
           builder: (ctxt, state) {
             if (state.status == CartStatus.initializing) {
-              return _buildTextMessage(message: 'initialize');
+              return _buildTextMessage(message: 'Initialize Cart');
             } else if (state.status == CartStatus.loading) {
-              return _buildTextMessage(message: 'loading');
+              return _buildTextMessage(message: 'Loading Cart');
             } else if (state.status == CartStatus.completed) {
               return _buildCartProdBloc(state);
             } else {
-              return _buildTextMessage(message: 'Error \n\n${state.error}');
+              return _buildTextMessage(
+                  message: 'Error In Cart \n\n${state.error}');
             }
           },
         ),
@@ -119,23 +135,24 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
 
   Widget _buildCartProdBloc(CartPageState cartState) {
     return BlocBuilder<CartPageBloc, CartPageState>(
-      bloc: _cartPageBloc..add(CartProductApiCallEvent(cartState.cart!)),
+      bloc: _cartPageBloc,
       builder: (ctxt, state) {
         if (state.cartProdStatus == CartProductStatus.initializing) {
-          return _buildTextMessage(message: 'Product initialize');
+          return _buildTextMessage(message: 'Initializing Product');
         } else if (state.cartProdStatus == CartProductStatus.loading) {
-          return _buildTextMessage(message: 'Product loading');
+          return _buildTextMessage(message: 'Loading Product');
         } else if (state.cartProdStatus == CartProductStatus.completed) {
           return _buildCartProductList();
         } else {
-          return _buildTextMessage(message: 'Product Error \n\n${state.error}');
+          return _buildTextMessage(
+              message: 'Error In Product\n\n${state.error}');
         }
       },
     );
   }
 
   Widget _buildCartProductList() {
-    final productsList = _cartPageBloc.state.cartProducts??[];
+    final productsList = _cartPageBloc.state.cartProducts ?? [];
     return SingleChildScrollView(
       child: Wrap(
         spacing: screenWidth * 0.035,

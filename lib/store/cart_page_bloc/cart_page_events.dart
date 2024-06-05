@@ -8,7 +8,8 @@ abstract class CartPageEvent extends Equatable {
 }
 
 class CartApiCallEvent extends CartPageEvent {
-  const CartApiCallEvent();
+  final void Function() callProduct;
+  const CartApiCallEvent(this.callProduct);
 }
 
 
