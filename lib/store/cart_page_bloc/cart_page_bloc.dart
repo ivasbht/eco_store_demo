@@ -66,43 +66,32 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     try {
       //
       //
-      // await Future.forEach(event.cartModel.products, (prod) async {
-      //   final response = await service.getSingleProducts(prod.productId.toString());
-      //   if (response.statusCode == 200) {
-      //     final productAdd = ProductModel.fromJson(response.data);
-      //     print(prod.toString());
-      //     productAdd.quanitiy = int.tryParse(prod.quantity.toString()) ?? 0;
-      //     products.add(productAdd);
-      //   }
-      // });
-       for (ProductInCartModel prod in event.cartModel.products)  {
-        final response = await service.getSingleProducts(prod.productId.toString());
+      await Future.forEach<ProductInCartModel>(event.cartModel.products,
+          (prod) async {
+        final response =
+            await service.getSingleProducts(prod.productId.toString());
         if (response.statusCode == 200) {
           final productAdd = ProductModel.fromJson(response.data);
           print(prod.toString());
           productAdd.quanitiy = int.tryParse(prod.quantity.toString()) ?? 0;
           products.add(productAdd);
         }
-      }
+      });
       //
       print("Complete");
-      emit(
-        state.copyWith(
-          cartProdStatus: CartProductStatus.completed,
-          cartProducts: products,
-          cart: event.cartModel,
-        ),
-      );
+      emit(state.copyWith(
+        cartProdStatus: CartProductStatus.completed,
+        cartProducts: products,
+      ));
+      // print(state.props.toString());
       //
       //
     } catch (error) {
       print(error.toString());
-      emit(
-        state.copyWith(
-          cartProdStatus: CartProductStatus.error,
-          error: error,
-        ),
-      );
+      emit(state.copyWith(
+        cartProdStatus: CartProductStatus.error,
+        error: error,
+      ));
     }
   }
 }

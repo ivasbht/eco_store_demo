@@ -31,8 +31,8 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
 
   @override
   void dispose() {
-    super.dispose();
     _homePageBloc.close();
+    super.dispose();
   }
 
   @override

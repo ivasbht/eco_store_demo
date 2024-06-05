@@ -18,7 +18,7 @@ class CartPageState extends Equatable {
   final CartStatus status;
   final CartProductStatus cartProdStatus;
   final CartModel? cart;
-  final List<ProductModel> cartProducts;
+  final List<ProductModel>? cartProducts;
   final dynamic error;
 
   const CartPageState({
@@ -32,8 +32,8 @@ class CartPageState extends Equatable {
   static CartPageState initial() => const CartPageState(
         cartProdStatus: CartProductStatus.initializing,
         status: CartStatus.initializing,
+        cartProducts: null,
         cart: null,
-        cartProducts: [],
         error: null,
       );
 
@@ -54,5 +54,6 @@ class CartPageState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, cart];
+  List<Object?> get props =>
+      [status, cartProdStatus, cart, cartProducts, error];
 }

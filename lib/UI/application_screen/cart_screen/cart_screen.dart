@@ -19,16 +19,20 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
   late CartPageBloc _cartPageBloc;
 
   @override
+  void initState() {
+    _cartPageBloc = CartPageBloc(service: appServices)..add(CartApiCallEvent());
+    super.initState();
+  }
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     initializaSize(context);
-    _cartPageBloc = CartPageBloc(service: appServices)..add(CartApiCallEvent());
   }
 
   @override
   void dispose() {
-    super.dispose();
     _cartPageBloc.close();
+    super.dispose();
   }
 
   @override
@@ -131,7 +135,7 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
   }
 
   Widget _buildCartProductList() {
-    final productsList = _cartPageBloc.state.cartProducts;
+    final productsList = _cartPageBloc.state.cartProducts??[];
     return SingleChildScrollView(
       child: Wrap(
         spacing: screenWidth * 0.035,
