@@ -18,8 +18,8 @@ class CartProdElement extends StatelessWidget {
     return InkWell(
       onTap: onPressProduct,
       child: Container(
-        width: screenSize.width * 0.8,
-        height: screenSize.height * 0.45,
+        width: screenSize.width * 0.95,
+        // height: screenSize.height * 0.,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
@@ -34,7 +34,7 @@ class CartProdElement extends StatelessWidget {
 
   Widget _buildContent() {
     return Container(
-      child: Column(
+      child: Row(
         children: [
           _buildProductImage(model!),
           _buildProductName(),
@@ -46,10 +46,11 @@ class CartProdElement extends StatelessWidget {
 
   Widget _buildProductImage(ProductModel prodModel) {
     return Container(
-      width: screenSize.width * 0.25,
-      height: screenSize.height * 0.25,
+      width: screenSize.width * 0.15,
+      height: screenSize.height * 0.15,
       margin: EdgeInsets.symmetric(
         vertical: screenSize.height * 0.01,
+        horizontal: screenSize.width * 0.01,
       ),
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -63,7 +64,7 @@ class CartProdElement extends StatelessWidget {
   Widget _buildProductName() {
     return Container(
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+      padding: EdgeInsets.only(left: screenSize.width * 0.05),
       child: CustomText(
         text: "${model?.title ?? "Name Not Available"}",
         fontSize: 12,
