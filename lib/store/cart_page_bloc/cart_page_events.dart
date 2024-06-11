@@ -14,6 +14,5 @@ class CartApiCallEvent extends CartPageEvent {
 
 
 class CartProductApiCallEvent extends CartPageEvent {
-  final List<CartModel> cartModel;
-  const CartProductApiCallEvent(this.cartModel);
+  const CartProductApiCallEvent();
 }

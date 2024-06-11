@@ -32,4 +32,11 @@ class CartModel {
       products: productLocal,
     );
   }
+
+  @override
+  String toString() {
+    return [id, userId, date, products.toList().toString()]
+        .toString();
+  }
+
 }

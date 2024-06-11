@@ -74,45 +74,18 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
       //
       String prodId = "";
       int quantity = 0;
-      ProductModel productAdd;
-
-      for (CartModel cart in event.cartModel) {
-        // for (ProductModel productInCart in cart.products)
+      for (CartModel cart in cartDetails) {
           for (int i = 0; i < cart.products.length; i++) {
-            ProductModel productInCart = cart.products[0];
-            prodId = productInCart.id.toString();
-            quantity = int.tryParse(productInCart.quanitity.toString()) ?? 0;
+            prodId = cart.products[i].id.toString();
+            quantity = int.tryParse(cart.products[i].quanitity.toString()) ?? 0;
             final response = await service.getSingleProducts(prodId);
             if (response.statusCode == 200) {
-              print("\nData: " + response.data.toString());
-              productInCart = ProductModel.fromJson(response.data);
-              print("Product: " + productInCart.toString());
-              // productInCart = productAdd;
-              productInCart.quanitity = quantity;
-              print("\nResult: " + productInCart.toString());
-              print("\Cart: " + cart.products.toString());
-              print('-------------------------------------------------');
+              cart.products[i] = ProductModel.fromJson(response.data);
+              cart.products[i].quanitity = quantity;
             }
           }
       }
 
-      // await Future.forEach(event.cartModel, (cart) async {
-      //   await Future.forEach(cart.products, (productInCart) async {
-      //     prodId = productInCart.id.toString();
-      //     quantity = int.tryParse(productInCart.quanitity.toString()) ?? 0;
-      //     final response = await service.getSingleProducts(prodId);
-      //     if (response.statusCode == 200) {
-      //       print("\nData: " + response.data.toString());
-      //       productAdd = ProductModel.fromJson(response.data);
-      //       print("Product: " + productInCart.toString());
-      //       productInCart = productAdd;
-      //       productInCart.quanitity = quantity;
-      //       print("\nResult: " + productInCart.toString());
-      //       print("\Cart: " + cart.products.toString());
-      //       print('-------------------------------------------------');
-      //     }
-      //   });
-      // });
       emit(state.copyWith(
         cartProdStatus: CartProductStatus.completed,
         cartDetails: cartDetails,

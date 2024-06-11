@@ -24,7 +24,7 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
     _cartPageBloc = CartPageBloc(service: appServices)
       ..add(CartApiCallEvent(() {
         _cartPageBloc
-          ..add(CartProductApiCallEvent(_cartPageBloc.state.cartDetails!));
+          ..add(CartProductApiCallEvent());
       }));
     // Future.delayed(Duration(seconds: 1),(){
     //   _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
@@ -59,7 +59,7 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
             onPressed: () {
               _cartPageBloc
                 ..add(
-                    CartProductApiCallEvent(_cartPageBloc.state.cartDetails!));
+                    CartProductApiCallEvent());
             },
             icon: Icon(Icons.refresh),
           ),
@@ -156,12 +156,10 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
   }
 
   Widget _buildCartProductList() {
-    final cartDetails = _cartPageBloc.state.cartDetails ?? [];
-
     return SingleChildScrollView(
       child: Column(
         children: [
-          ...cartDetails.map((cart) {
+          ..._cartPageBloc.cartDetails.map((cart) {
             return _buildProductSpreader(cart.products);
           }).toList(),
         ],
