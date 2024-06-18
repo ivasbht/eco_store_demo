@@ -19,7 +19,9 @@ class CartProdElement extends StatelessWidget {
       onTap: onPressProduct,
       child: Container(
         width: screenSize.width * 0.95,
-        // height: screenSize.height * 0.,
+        margin: EdgeInsets.only(
+          bottom: screenSize.height*0.025,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
@@ -37,8 +39,12 @@ class CartProdElement extends StatelessWidget {
       child: Row(
         children: [
           _buildProductImage(model!),
-          _buildProductName(),
-          _buildPricing(),
+          Column(
+            children: [
+              _buildProductName(),
+              _buildPricing(),
+            ],
+          ),
         ],
       ),
     );
@@ -63,7 +69,8 @@ class CartProdElement extends StatelessWidget {
 
   Widget _buildProductName() {
     return Container(
-      alignment: Alignment.topCenter,
+      width: screenSize.width*0.75,
+      alignment: Alignment.topLeft,
       padding: EdgeInsets.only(left: screenSize.width * 0.05),
       child: CustomText(
         text: "${model?.title ?? "Name Not Available"}",
@@ -71,20 +78,21 @@ class CartProdElement extends StatelessWidget {
         maxLine: 3,
         overflow: TextOverflow.ellipsis,
         fontWeight: FontWeight.bold,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.left,
       ),
     );
   }
 
   Widget _buildPricing() {
     return Container(
-      alignment: Alignment.topCenter,
+      alignment: Alignment.topLeft,
+      width: screenSize.width*0.75,
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
         text: "\n \$ " + "${model?.price ?? "N/A"}",
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.left,
       ),
     );
   }

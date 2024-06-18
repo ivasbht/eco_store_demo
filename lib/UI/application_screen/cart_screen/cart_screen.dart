@@ -1,6 +1,5 @@
 import 'package:eco_store_demo/UI/widgets_collection/cart_prod_element/cart_prod_element.dart';
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
-import 'package:eco_store_demo/UI/widgets_collection/custom_textfield_widget/custom_textfield_widget.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
 import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:eco_store_demo/services/app_service/app_service.dart';
@@ -74,7 +73,7 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            _buildSearchBar(),
+            // _buildSearchBar(),
             _buildCartComponent(),
           ],
         ),
@@ -82,26 +81,26 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
     );
   }
 
-  Widget _buildSearchBar({
-    TextEditingController? searchController,
-  }) {
-    return Container(
-      width: screenWidth * 0.9,
-      child: CustomTextfieldWidget(
-        controller: searchController,
-        fillColor: Colors.blueAccent.shade100,
-        filled: true,
-        hintText: "Search Your Cart Item Here....",
-        hintStyle: TextStyle(color: Colors.white54),
-        style: TextStyle(color: Colors.white),
-        suffixIcon: Icon(
-          Icons.search,
-          size: 30,
-        ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
-      ),
-    );
-  }
+  // Widget _buildSearchBar({
+  //   TextEditingController? searchController,
+  // }) {
+  //   return Container(
+  //     width: screenWidth * 0.9,
+  //     child: CustomTextfieldWidget(
+  //       controller: searchController,
+  //       fillColor: Colors.blueAccent.shade100,
+  //       filled: true,
+  //       hintText: "Search Your Cart Item Here....",
+  //       hintStyle: TextStyle(color: Colors.white54),
+  //       style: TextStyle(color: Colors.white),
+  //       suffixIcon: Icon(
+  //         Icons.search,
+  //         size: 30,
+  //       ),
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+  //     ),
+  //   );
+  // }
 
   Widget _buildCartComponent() {
     return Expanded(
