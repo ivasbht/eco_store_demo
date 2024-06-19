@@ -37,4 +37,9 @@ class AppServices extends  DioService {
     return _response;
   }
 
+  Future<Response> removeUserCartProduct(String cartId) async {
+    final _response = await dio.delete("/carts/$cartId");
+    return _response;
+  }
+
 }

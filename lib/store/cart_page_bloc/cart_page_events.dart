@@ -16,3 +16,17 @@ class CartApiCallEvent extends CartPageEvent {
 class CartProductApiCallEvent extends CartPageEvent {
   const CartProductApiCallEvent();
 }
+
+class CartAddEvent extends CartPageEvent {
+  const CartAddEvent();
+}
+
+class CartUpdateEvent extends CartPageEvent {
+  const CartUpdateEvent();
+}
+
+class CartRemoveEvent extends CartPageEvent {
+  final String cartId;
+  final void Function() onCompletion;
+  const CartRemoveEvent(this.cartId,this.onCompletion);
+}

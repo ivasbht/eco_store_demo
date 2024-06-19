@@ -13,9 +13,12 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
   CartPageBloc({required this.service}) : super(CartPageState.initial()) {
     on<CartApiCallEvent>(_getCartDetails);
     on<CartProductApiCallEvent>(_getCartProductList);
+    on<CartRemoveEvent>(_removeProductFromCart);
   }
 
   List<CartModel> cartDetails = [];
+
+  List<ProductModel> productsAddedInCart = [];
 
   Future<void> _getCartDetails(
     CartApiCallEvent event,
@@ -75,15 +78,18 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
       String prodId = "";
       int quantity = 0;
       for (CartModel cart in cartDetails) {
-          for (int i = 0; i < cart.products.length; i++) {
-            prodId = cart.products[i].id.toString();
-            quantity = int.tryParse(cart.products[i].quanitity.toString()) ?? 0;
-            final response = await service.getSingleProducts(prodId);
-            if (response.statusCode == 200) {
-              cart.products[i] = ProductModel.fromJson(response.data);
-              cart.products[i].quanitity = quantity;
-            }
+        for (int i = 0; i < cart.products.length; i++) {
+          prodId = cart.products[i].id.toString();
+          quantity = int.tryParse(cart.products[i].quanitity.toString()) ?? 0;
+          final response = await service.getSingleProducts(prodId);
+          if (response.statusCode == 200) {
+            cart.products[i] = ProductModel.fromJson(response.data);
+            cart.products[i].quanitity = quantity;
+            cart.products[i].cartId = cart.id.toString();
+            cart.products[i].userId = cart.userId.toString();
+            productsAddedInCart.add(cart.products[i]);
           }
+        }
       }
 
       emit(state.copyWith(
@@ -96,6 +102,22 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
       print(error.toString());
       emit(state.copyWith(
         cartProdStatus: CartProductStatus.error,
+        error: error,
+      ));
+    }
+  }
+
+  Future<void> _removeProductFromCart(
+    CartRemoveEvent event,
+    Emitter<CartPageState> emit,
+  ) async {
+    try {
+      await service.removeUserCartProduct(event.cartId);
+      event.onCompletion();
+      emit(state);
+    } catch (error) {
+      print(error.toString());
+      emit(state.copyWith(
         error: error,
       ));
     }

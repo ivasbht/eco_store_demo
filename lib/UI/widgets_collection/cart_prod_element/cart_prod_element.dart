@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 class CartProdElement extends StatelessWidget {
   final ProductModel? model;
   final void Function()? onPressProduct;
+  final void Function()? onRemoveProduct;
   final Size screenSize;
   const CartProdElement({
     super.key,
     required this.screenSize,
     this.model,
     this.onPressProduct,
+    this.onRemoveProduct,
   });
 
   @override
@@ -20,7 +22,7 @@ class CartProdElement extends StatelessWidget {
       child: Container(
         width: screenSize.width * 0.95,
         margin: EdgeInsets.only(
-          bottom: screenSize.height*0.025,
+          bottom: screenSize.height * 0.025,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -40,9 +42,11 @@ class CartProdElement extends StatelessWidget {
         children: [
           _buildProductImage(model!),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               _buildProductName(),
               _buildPricing(),
+              _buildDeleteCart(),
             ],
           ),
         ],
@@ -69,7 +73,7 @@ class CartProdElement extends StatelessWidget {
 
   Widget _buildProductName() {
     return Container(
-      width: screenSize.width*0.75,
+      width: screenSize.width * 0.75,
       alignment: Alignment.topLeft,
       padding: EdgeInsets.only(left: screenSize.width * 0.05),
       child: CustomText(
@@ -86,13 +90,27 @@ class CartProdElement extends StatelessWidget {
   Widget _buildPricing() {
     return Container(
       alignment: Alignment.topLeft,
-      width: screenSize.width*0.75,
+      width: screenSize.width * 0.75,
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
         text: "\n \$ " + "${model?.price ?? "N/A"}",
         fontSize: 18,
         fontWeight: FontWeight.bold,
         textAlign: TextAlign.left,
+      ),
+    );
+  }
+
+  Widget _buildDeleteCart() {
+    return TextButton(
+      onPressed: onRemoveProduct,
+      style: TextButton.styleFrom(
+        side: BorderSide(color: Colors.blue)
+      ),
+      child: CustomText(
+        text: "Remove",
+        color: Colors.blue,
+        fontWeight: FontWeight.bold,
       ),
     );
   }

@@ -20,15 +20,15 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
 
   @override
   void initState() {
+    _callCartApi();
+    super.initState();
+  }
+
+  void _callCartApi() {
     _cartPageBloc = CartPageBloc(service: appServices)
       ..add(CartApiCallEvent(() {
-        _cartPageBloc
-          ..add(CartProductApiCallEvent());
+        _cartPageBloc..add(CartProductApiCallEvent());
       }));
-    // Future.delayed(Duration(seconds: 1),(){
-    //   _cartPageBloc..add(CartProductApiCallEvent(_cartPageBloc.state.cart!));
-    // });
-    super.initState();
   }
 
   @override
@@ -56,9 +56,7 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
         actions: [
           IconButton(
             onPressed: () {
-              _cartPageBloc
-                ..add(
-                    CartProductApiCallEvent());
+              _callCartApi();
             },
             icon: Icon(Icons.refresh),
           ),
@@ -80,27 +78,6 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
       ),
     );
   }
-
-  // Widget _buildSearchBar({
-  //   TextEditingController? searchController,
-  // }) {
-  //   return Container(
-  //     width: screenWidth * 0.9,
-  //     child: CustomTextfieldWidget(
-  //       controller: searchController,
-  //       fillColor: Colors.blueAccent.shade100,
-  //       filled: true,
-  //       hintText: "Search Your Cart Item Here....",
-  //       hintStyle: TextStyle(color: Colors.white54),
-  //       style: TextStyle(color: Colors.white),
-  //       suffixIcon: Icon(
-  //         Icons.search,
-  //         size: 30,
-  //       ),
-  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
-  //     ),
-  //   );
-  // }
 
   Widget _buildCartComponent() {
     return Expanded(
@@ -174,9 +151,36 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
             screenSize: screenSize,
             model: product,
             onPressProduct: () {},
+            onRemoveProduct: () {
+              print("removingCart");
+              _cartPageBloc.add(CartRemoveEvent(product.cartId, () {
+                _callCartApi();
+              }));
+            },
           );
         }),
       ],
     );
   }
+
+  // Widget _buildSearchBar({
+  //   TextEditingController? searchController,
+  // }) {
+  //   return Container(
+  //     width: screenWidth * 0.9,
+  //     child: CustomTextfieldWidget(
+  //       controller: searchController,
+  //       fillColor: Colors.blueAccent.shade100,
+  //       filled: true,
+  //       hintText: "Search Your Cart Item Here....",
+  //       hintStyle: TextStyle(color: Colors.white54),
+  //       style: TextStyle(color: Colors.white),
+  //       suffixIcon: Icon(
+  //         Icons.search,
+  //         size: 30,
+  //       ),
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+  //     ),
+  //   );
+  // }
 }
