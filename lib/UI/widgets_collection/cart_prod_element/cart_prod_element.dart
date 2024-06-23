@@ -2,15 +2,17 @@ import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dar
 import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:flutter/material.dart';
 
-class ProductsElement extends StatelessWidget {
+class CartProdElement extends StatelessWidget {
   final ProductModel? model;
   final void Function()? onPressProduct;
+  final void Function()? onRemoveProduct;
   final Size screenSize;
-  const ProductsElement({
+  const CartProdElement({
     super.key,
     required this.screenSize,
     this.model,
     this.onPressProduct,
+    this.onRemoveProduct,
   });
 
   @override
@@ -18,8 +20,10 @@ class ProductsElement extends StatelessWidget {
     return InkWell(
       onTap: onPressProduct,
       child: Container(
-        width: screenSize.width * 0.4,
-        height: screenSize.height * 0.45,
+        width: screenSize.width * 0.95,
+        margin: EdgeInsets.only(
+          bottom: screenSize.height * 0.025,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
@@ -34,11 +38,17 @@ class ProductsElement extends StatelessWidget {
 
   Widget _buildContent() {
     return Container(
-      child: Column(
+      child: Row(
         children: [
           _buildProductImage(model!),
-          _buildProductName(),
-          _buildPricing(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              _buildProductName(),
+              _buildPricing(),
+              _buildDeleteCart(),
+            ],
+          ),
         ],
       ),
     );
@@ -46,10 +56,11 @@ class ProductsElement extends StatelessWidget {
 
   Widget _buildProductImage(ProductModel prodModel) {
     return Container(
-      width: screenSize.width * 0.25,
-      height: screenSize.height * 0.25,
+      width: screenSize.width * 0.15,
+      height: screenSize.height * 0.15,
       margin: EdgeInsets.symmetric(
         vertical: screenSize.height * 0.01,
+        horizontal: screenSize.width * 0.01,
       ),
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -62,28 +73,44 @@ class ProductsElement extends StatelessWidget {
 
   Widget _buildProductName() {
     return Container(
-      alignment: Alignment.topCenter,
-      padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+      width: screenSize.width * 0.75,
+      alignment: Alignment.topLeft,
+      padding: EdgeInsets.only(left: screenSize.width * 0.05),
       child: CustomText(
         text: "${model?.title ?? "Name Not Available"}",
         fontSize: 12,
         maxLine: 3,
         overflow: TextOverflow.ellipsis,
         fontWeight: FontWeight.bold,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.left,
       ),
     );
   }
 
   Widget _buildPricing() {
     return Container(
-      alignment: Alignment.topCenter,
+      alignment: Alignment.topLeft,
+      width: screenSize.width * 0.75,
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
         text: "\n \$ " + "${model?.price ?? "N/A"}",
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
+
+  Widget _buildDeleteCart() {
+    return TextButton(
+      onPressed: onRemoveProduct,
+      style: TextButton.styleFrom(
+        side: BorderSide(color: Colors.blue)
+      ),
+      child: CustomText(
+        text: "Remove",
+        color: Colors.blue,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
