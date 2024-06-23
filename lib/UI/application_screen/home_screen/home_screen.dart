@@ -6,6 +6,7 @@ import 'package:eco_store_demo/UI/widgets_collection/product_detail_sheet/produc
 import 'package:eco_store_demo/UI/widgets_collection/products_element/products_element.dart';
 import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
 import 'package:eco_store_demo/services/app_service/app_service.dart';
+import 'package:eco_store_demo/store/cart_page_bloc/cart_page_bloc.dart';
 import 'package:eco_store_demo/store/home_page_bloc/home_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,19 +21,32 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with SizeMixin {
   final appServices = AppServices();
   late HomePageBloc _homePageBloc;
+  late CartPageBloc _cartPageBloc;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     initializaSize(context);
+    _initializeHomeBloc();
+    _initializeCartBloc();
+  }
+
+  void _initializeHomeBloc() {
     _homePageBloc = HomePageBloc(service: appServices)
       ..add(HomeProductListCallEvent());
   }
 
+  void _initializeCartBloc() {
+    _cartPageBloc = CartPageBloc(service: appServices)
+      ..add(CartApiCallEvent(() {
+        _cartPageBloc..add(CartProductApiCallEvent());
+      }));
+  }
+
   @override
   void dispose() {
-    super.dispose();
     _homePageBloc.close();
+    super.dispose();
   }
 
   @override
@@ -47,7 +61,9 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.cart_screen);
+            },
             icon: Icon(Icons.shopping_cart_outlined),
           )
         ],
@@ -145,7 +161,6 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
   }
 
   Widget _buildProductList() {
-    ;
     final productsList = _homePageBloc.state.productModels ?? [];
     return SingleChildScrollView(
       child: Wrap(
@@ -185,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
               return ProductDetailSheet(
                 screenSize: screenSize,
                 product: prodState.productDetails!,
-                onAddToCart: (){},
+                onAddToCart: () {},
               );
             } else {
               return _buildTextMessage(message: 'Error \n\n${prodState.error}');
@@ -198,6 +213,6 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
           productDetails: null,
           productStatus: ProductDetailStatus.initializing,
         );
-    });
+      });
   }
 }
