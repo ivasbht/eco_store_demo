@@ -73,24 +73,9 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
       ),
     );
     try {
-      //
-      //
+
       String prodId = "";
       int quantity = 0;
-      for (CartModel cart in cartDetails) {
-        for (int i = 0; i < cart.products.length; i++) {
-          prodId = cart.products[i].id.toString();
-          quantity = int.tryParse(cart.products[i].quanitity.toString()) ?? 0;
-          final response = await service.getSingleProducts(prodId);
-          if (response.statusCode == 200) {
-            cart.products[i] = ProductModel.fromJson(response.data);
-            cart.products[i].quanitity = quantity;
-            cart.products[i].cartId = cart.id.toString();
-            cart.products[i].userId = cart.userId.toString();
-            productsAddedInCart.add(cart.products[i]);
-          }
-        }
-      }
 
       emit(state.copyWith(
         cartProdStatus: CartProductStatus.completed,

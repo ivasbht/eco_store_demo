@@ -1,42 +1,25 @@
-import 'package:eco_store_demo/model/product_model/product_model.dart';
+import 'package:hive/hive.dart';
 
-class CartModel {
-  final id;
-  final userId;
-  final date;
-  List<ProductModel> products;
+class CartModel extends HiveObject {
+  final productId;
+  final quantity;
 
   CartModel({
-    this.id,
-    this.userId,
-    this.date,
-    this.products = const [],
+    this.productId,
+    this.quantity,
   });
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
-    final List<ProductModel> productLocal = [];
-    try {
-      (json["products"] as List).forEach((prodQuantity) {
-        productLocal.add(ProductModel(
-          id: prodQuantity['productId'],
-          quanitity: int.tryParse(prodQuantity['quantity'].toString()) ?? 0,
-        ));
-      });
-    } catch (_) {}
-    //
-    //
     return CartModel(
-      id: json['id'],
-      userId: json['userId'],
-      date: json['date'],
-      products: productLocal,
+      productId: json['productId'],
+      quantity: json['quantity'],
     );
   }
 
-  @override
-  String toString() {
-    return [id, userId, date, products.toList().toString()]
-        .toString();
+  Map<String, dynamic> toMap() {
+    return {
+      "productId": productId,
+      "quantity": quantity,
+    };
   }
-
 }

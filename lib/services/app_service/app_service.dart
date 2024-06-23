@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:eco_store_demo/services/core_service/dio_service/dio_service.dart';
+import 'package:eco_store_demo/services/core_service/base_service/base_service.dart';
 
-class AppServices extends  DioService {
-
+class AppServices extends BaseService {
   final userId = 1; // for demo purpose until login is made
   final id = 1;
 
@@ -41,5 +40,4 @@ class AppServices extends  DioService {
     final _response = await dio.delete("/carts/$cartId");
     return _response;
   }
-
 }

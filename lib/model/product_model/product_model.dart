@@ -7,8 +7,6 @@ class ProductModel {
   final image;
   final rating;
   int quanitity;
-  String cartId;
-  String userId;
 
   ProductModel({
     this.id,
@@ -19,8 +17,6 @@ class ProductModel {
     this.image,
     this.rating,
     this.quanitity = 0,
-    this.cartId = "",
-    this.userId = "",
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
