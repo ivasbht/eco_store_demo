@@ -2,7 +2,6 @@ import 'package:eco_store_demo/UI/widgets_collection/cart_prod_element/cart_prod
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
 import 'package:eco_store_demo/model/cart_model/cart_model.dart';
-import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:eco_store_demo/services/app_service/app_service.dart';
 import 'package:eco_store_demo/store/cart_page_bloc/cart_page_bloc.dart';
 import 'package:flutter/material.dart';

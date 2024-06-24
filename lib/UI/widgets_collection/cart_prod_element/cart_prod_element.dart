@@ -114,7 +114,7 @@ class CartProdElement extends StatelessWidget {
       width: screenSize.width * 0.75,
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
-        text: "\nQuantity" + "${model?.quanitity ?? "N/A"}",
+        text: "\nQuantity",
         fontSize: 13,
         fontWeight: FontWeight.bold,
         textAlign: TextAlign.left,
@@ -125,8 +125,8 @@ class CartProdElement extends StatelessWidget {
   Widget _buildSpinnerButton() {
     return Container(
       margin: EdgeInsets.only(
-        top: screenSize.height * 0.05,
-        bottom: screenSize.height * 0.05,
+        top: screenSize.height * 0.01,
+        bottom: screenSize.height * 0.01,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
