@@ -1,7 +1,6 @@
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
 import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ProductDetailSheet extends StatelessWidget {
   final Size screenSize;
