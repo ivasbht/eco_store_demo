@@ -1,10 +1,11 @@
 import 'package:eco_store_demo/UI/widgets_collection/custom_drawer/custom_drawer.dart';
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
-import 'package:eco_store_demo/UI/widgets_collection/custom_textfield_widget/custom_textfield_widget.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
 import 'package:eco_store_demo/UI/widgets_collection/product_detail_sheet/product_detail_sheet.dart';
 import 'package:eco_store_demo/UI/widgets_collection/products_element/products_element.dart';
 import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
+import 'package:eco_store_demo/model/cart_model/cart_model.dart';
+import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:eco_store_demo/services/app_service/app_service.dart';
 import 'package:eco_store_demo/store/cart_page_bloc/cart_page_bloc.dart';
 import 'package:eco_store_demo/store/home_page_bloc/home_page_bloc.dart';
@@ -19,16 +20,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with SizeMixin {
-  final appServices = AppServices();
+  final AppServices appServices = AppServices();
   late HomePageBloc _homePageBloc;
   late CartPageBloc _cartPageBloc;
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     initializaSize(context);
     _initializeHomeBloc();
     _initializeCartBloc();
+    await appServices.openCartBox();
   }
 
   void _initializeHomeBloc() {
@@ -38,14 +40,14 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
 
   void _initializeCartBloc() {
     _cartPageBloc = CartPageBloc(service: appServices)
-      ..add(CartApiCallEvent(() {
-        _cartPageBloc..add(CartProductApiCallEvent());
-      }));
+      ..add(CartApiCallEvent(() {}));
   }
 
   @override
   void dispose() {
     _homePageBloc.close();
+    _cartPageBloc.close();
+    // appServices.closeCart();
     super.dispose();
   }
 
@@ -98,31 +100,10 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            _buildSearchBar(),
+            // _buildSearchBar(),
             _buildProductComponent(),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar({
-    TextEditingController? searchController,
-  }) {
-    return Container(
-      width: screenWidth * 0.9,
-      child: CustomTextfieldWidget(
-        controller: searchController,
-        fillColor: Colors.blueAccent.shade100,
-        filled: true,
-        hintText: "Search Your Item Here....",
-        hintStyle: TextStyle(color: Colors.white54),
-        style: TextStyle(color: Colors.white),
-        suffixIcon: Icon(
-          Icons.search,
-          size: 30,
-        ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
       ),
     );
   }
@@ -197,11 +178,7 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
               return _buildTextMessage(message: 'loading');
             } else if (prodState.productStatus ==
                 ProductDetailStatus.completed) {
-              return ProductDetailSheet(
-                screenSize: screenSize,
-                product: prodState.productDetails!,
-                onAddToCart: () {},
-              );
+              return _buildBlocForCartUpdate(prodState.productDetails!);
             } else {
               return _buildTextMessage(message: 'Error \n\n${prodState.error}');
             }
@@ -215,4 +192,81 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
         );
       });
   }
+
+  Widget _buildBlocForCartUpdate(ProductModel prod) {
+    return BlocBuilder<CartPageBloc, CartPageState>(
+      bloc: _cartPageBloc..add(CartApiCallEvent(() {})),
+      builder: (context, cartState) {
+        return _buildProductDetailScreen(prod, quantity: _getQuantity(prod));
+      },
+    );
+  }
+
+  Widget _buildProductDetailScreen(ProductModel prod, {int quantity = 0}) {
+    return ProductDetailSheet(
+      screenSize: screenSize,
+      product: prod,
+      quantity: quantity,
+      onAddToCart: () {
+        _updateCartBloc(prodId: prod.id.toString());
+      },
+      onIncrement: (quantity) {
+        _updateCartBloc(
+          prodId: prod.id.toString(),
+          quantity:quantity,
+        );
+      },
+      onDecrement: (quantity) {
+        _updateCartBloc(
+          prodId: prod.id.toString(),
+          quantity:quantity,
+        );
+      },
+    );
+  }
+
+  void _updateCartBloc({int quantity = 1, required String prodId}) {
+    _cartPageBloc.add(
+      CartAddUpdateEvent(
+        CartModel(
+          productId: prodId,
+          quantity: quantity,
+        ),
+        () {
+          _cartPageBloc.add(CartApiCallEvent(() {}));
+        },
+      ),
+    );
+  }
+
+  int _getQuantity(ProductModel prod) {
+    int quantity = 0;
+    _cartPageBloc.cartDetails.forEach((cart) {
+      if (prod.id.toString() == cart.productId.toString()) {
+        quantity = int.tryParse(cart.quantity.toString()) ?? 0;
+      }
+    });
+    return quantity;
+  }
+
+  // Widget _buildSearchBar({
+  //   TextEditingController? searchController,
+  // }) {
+  //   return Container(
+  //     width: screenWidth * 0.9,
+  //     child: CustomTextfieldWidget(
+  //       controller: searchController,
+  //       fillColor: Colors.blueAccent.shade100,
+  //       filled: true,
+  //       hintText: "Search Your Item Here....",
+  //       hintStyle: TextStyle(color: Colors.white54),
+  //       style: TextStyle(color: Colors.white),
+  //       suffixIcon: Icon(
+  //         Icons.search,
+  //         size: 30,
+  //       ),
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+  //     ),
+  //   );
+  // }
 }

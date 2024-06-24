@@ -1,16 +1,23 @@
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
 import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ProductDetailSheet extends StatelessWidget {
   final Size screenSize;
   final ProductModel product;
+  final int quantity;
   final void Function()? onAddToCart;
+  final void Function(int)? onIncrement;
+  final void Function(int)? onDecrement;
   ProductDetailSheet({
     super.key,
     required this.screenSize,
     required this.product,
     this.onAddToCart,
+    this.quantity = 0,
+    this.onIncrement,
+    this.onDecrement,
   });
 
   @override
@@ -33,7 +40,11 @@ class ProductDetailSheet extends StatelessWidget {
               _buildProductRating(),
               _buildPricing(),
               _buildProductDescription(),
-              _buildAddToCartButton(),
+              if (quantity <= 0) ...[
+                _buildAddToCartButton(),
+              ] else ...[
+                _buildSpinnerButton(),
+              ],
             ],
           ),
         ],
@@ -156,6 +167,50 @@ class ProductDetailSheet extends StatelessWidget {
           color: Colors.white,
           fontSize: 18,
         ),
+      ),
+    );
+  }
+
+  Widget _buildSpinnerButton() {
+    return Container(
+      margin: EdgeInsets.only(
+        top: screenSize.height * 0.05,
+        bottom: screenSize.height * 0.05,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: () {
+              if (onDecrement != null) {
+                onDecrement!(quantity-1);
+              }
+            },
+            iconSize: 40,
+            icon: Icon(
+              Icons.remove,
+            ),
+          ),
+          SizedBox(
+            width: screenSize.width * 0.35,
+            child: CustomText(
+              text: "${quantity}",
+              fontWeight: FontWeight.bold,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              if (onIncrement != null) {
+                onIncrement!(quantity+1);
+              }
+            },
+            iconSize: 40,
+            icon: Icon(
+              Icons.add_circle_outlined,
+            ),
+          ),
+        ],
       ),
     );
   }

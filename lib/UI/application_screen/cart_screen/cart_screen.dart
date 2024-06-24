@@ -1,6 +1,7 @@
 import 'package:eco_store_demo/UI/widgets_collection/cart_prod_element/cart_prod_element.dart';
 import 'package:eco_store_demo/UI/widgets_collection/custom_text/custom_text.dart';
 import 'package:eco_store_demo/UI/widgets_collection/mixins/size_mixin/size_mixin.dart';
+import 'package:eco_store_demo/model/cart_model/cart_model.dart';
 import 'package:eco_store_demo/model/product_model/product_model.dart';
 import 'package:eco_store_demo/services/app_service/app_service.dart';
 import 'package:eco_store_demo/store/cart_page_bloc/cart_page_bloc.dart';
@@ -15,31 +16,33 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> with SizeMixin {
-  final appServices = AppServices();
+  final AppServices appServices = AppServices();
   late CartPageBloc _cartPageBloc;
 
   @override
   void initState() {
-    _callCartApi();
     super.initState();
+    _cartPageBloc = CartPageBloc(service: appServices);
   }
 
   void _callCartApi() {
-    _cartPageBloc = CartPageBloc(service: appServices)
-      ..add(CartApiCallEvent(() {
-        _cartPageBloc..add(CartProductApiCallEvent());
-      }));
+    _cartPageBloc.add(CartApiCallEvent(() {
+      _cartPageBloc..add(CartProductApiCallEvent());
+    }));
   }
 
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     initializaSize(context);
+    await appServices.openCartBox();
+    _callCartApi();
   }
 
   @override
   void dispose() {
-    _cartPageBloc.close();
+    // _cartPageBloc.close();
+    // appServices.closeCart();
     super.dispose();
   }
 
@@ -135,31 +138,55 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ..._cartPageBloc.cartDetails.map((cart) {
-            return _buildProductSpreader(cart.products);
-          }).toList(),
+          ..._cartPageBloc.productsAddedInCart.map((product) {
+            return CartProdElement(
+              screenSize: screenSize,
+              model: product,
+              quantity: product.quanitity,
+              onRemoveProduct: () {
+                _cartPageBloc.add(CartRemoveEvent(product.id.toString(), () {
+                  _callCartApi();
+                }));
+              },
+              onIncrement: (quantity) {
+                _updateCartBloc(
+                  prodId: product.id.toString(),
+                  quantity: quantity,
+                );
+              },
+              onDecrement: (quantity) {
+                _updateCartBloc(
+                  prodId: product.id.toString(),
+                  quantity: quantity,
+                );
+              },
+            );
+          }),
         ],
       ),
     );
   }
 
-  Widget _buildProductSpreader(List<ProductModel> products) {
-    return Column(
-      children: [
-        ...products.map((product) {
-          return CartProdElement(
-            screenSize: screenSize,
-            model: product,
-            onPressProduct: () {},
-            onRemoveProduct: () {
-              print("removingCart");
-              _cartPageBloc.add(CartRemoveEvent(product.cartId, () {
-                _callCartApi();
-              }));
-            },
-          );
-        }),
-      ],
+  // Widget _buildBlocForCartUpdate() {
+  //   return BlocBuilder<CartPageBloc, CartPageState>(
+  //     bloc: _cartPageBloc,
+  //     builder: (context, cartState) {
+  //       return _buildCartProductList();
+  //     },
+  //   );
+  // }
+
+  void _updateCartBloc({int quantity = 1, required String prodId}) {
+    _cartPageBloc.add(
+      CartAddUpdateEvent(
+        CartModel(
+          productId: prodId,
+          quantity: quantity,
+        ),
+        () {
+         _callCartApi();
+        },
+      ),
     );
   }
 

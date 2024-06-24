@@ -1,31 +1,36 @@
+import 'dart:developer';
+
 import 'package:eco_store_demo/const_files/config_file/config_file.dart';
 import 'package:eco_store_demo/model/cart_model/cart_model.dart';
 import 'package:hive/hive.dart';
 
 mixin LocalService {
-  late Box cartBox;
+  Box? cartBox;
 
   Future<void> openCartBox() async {
-    if (cartBox.isOpen) {
-      cartBox = await Hive.box(ConfigFile.cartBoxName);
-    } else {
+    if (cartBox == null || (!cartBox!.isOpen)) {
       cartBox = await Hive.openBox(ConfigFile.cartBoxName);
+      log("Opening Box:${cartBox?.isOpen??"N/A"}");
+    } else {
+      log("Already Open: ${cartBox?.isOpen??"N/A"}");
+      cartBox = await Hive.box(ConfigFile.cartBoxName);
     }
   }
 
   Future<void> closeCart() async {
-    return cartBox.close();
+    log("Closing Cart");
+    return cartBox!.close();
   }
 
   Future<void> addUpdateCart(CartModel cart) async {
-    cartBox.put(cart.productId, cart.toMap());
+    cartBox!.put(cart.productId.toString(), cart.toMap());
   }
 
-  Future<void> deleteCart(CartModel cart) async {
-    cartBox.delete(cart.productId);
+  Future<void> deleteCart(String productId) async {
+    await cartBox!.delete(productId);
   }
 
-  Future<dynamic> getAllCart() async {
-    return cartBox.values.toList();
+  List<dynamic> getAllCart() {
+    return (cartBox?.values??[]).toList();
   }
 }

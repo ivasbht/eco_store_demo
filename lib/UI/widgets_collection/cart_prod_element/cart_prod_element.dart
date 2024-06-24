@@ -6,6 +6,9 @@ class CartProdElement extends StatelessWidget {
   final ProductModel? model;
   final void Function()? onPressProduct;
   final void Function()? onRemoveProduct;
+  final int quantity;
+  final void Function(int)? onIncrement;
+  final void Function(int)? onDecrement;
   final Size screenSize;
   const CartProdElement({
     super.key,
@@ -13,6 +16,9 @@ class CartProdElement extends StatelessWidget {
     this.model,
     this.onPressProduct,
     this.onRemoveProduct,
+    this.quantity = 0,
+    this.onIncrement,
+    this.onDecrement,
   });
 
   @override
@@ -46,6 +52,7 @@ class CartProdElement extends StatelessWidget {
             children: [
               _buildProductName(),
               _buildPricing(),
+              _buildSpinnerButton(),
               _buildDeleteCart(),
             ],
           ),
@@ -77,8 +84,8 @@ class CartProdElement extends StatelessWidget {
       alignment: Alignment.topLeft,
       padding: EdgeInsets.only(left: screenSize.width * 0.05),
       child: CustomText(
-        text: "${model?.title ?? "Name Not Available"}",
-        fontSize: 12,
+        text: "\n${model?.title ?? "Name Not Available"}",
+        fontSize: 16,
         maxLine: 3,
         overflow: TextOverflow.ellipsis,
         fontWeight: FontWeight.bold,
@@ -94,23 +101,94 @@ class CartProdElement extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
         text: "\n \$ " + "${model?.price ?? "N/A"}",
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: FontWeight.bold,
         textAlign: TextAlign.left,
       ),
     );
   }
 
-  Widget _buildDeleteCart() {
-    return TextButton(
-      onPressed: onRemoveProduct,
-      style: TextButton.styleFrom(
-        side: BorderSide(color: Colors.blue)
-      ),
+  Widget _buildQuantity() {
+    return Container(
+      alignment: Alignment.topLeft,
+      width: screenSize.width * 0.75,
+      padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
       child: CustomText(
-        text: "Remove",
-        color: Colors.blue,
+        text: "\nQuantity" + "${model?.quanitity ?? "N/A"}",
+        fontSize: 13,
         fontWeight: FontWeight.bold,
+        textAlign: TextAlign.left,
+      ),
+    );
+  }
+
+  Widget _buildSpinnerButton() {
+    return Container(
+      margin: EdgeInsets.only(
+        top: screenSize.height * 0.05,
+        bottom: screenSize.height * 0.05,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildQuantity(),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              IconButton(
+                onPressed: () {
+                  if (onDecrement != null) {
+                    onDecrement!(quantity - 1);
+                    if (quantity == 1) {
+                      if (onRemoveProduct != null) {
+                        onRemoveProduct!();
+                      }
+                    }
+                  }
+                },
+                iconSize: 20,
+                icon: Icon(
+                  Icons.remove,
+                ),
+              ),
+              SizedBox(
+                width: screenSize.width * 0.15,
+                child: CustomText(
+                  text: "${quantity}",
+                  fontWeight: FontWeight.bold,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  if (onIncrement != null) {
+                    onIncrement!(quantity + 1);
+                  }
+                },
+                iconSize: 20,
+                icon: Icon(
+                  Icons.add_circle_outlined,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeleteCart() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+        onPressed: onRemoveProduct,
+        style: TextButton.styleFrom(side: BorderSide(color: Colors.blue)),
+        child: CustomText(
+          text: "Remove",
+          color: Colors.blue,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

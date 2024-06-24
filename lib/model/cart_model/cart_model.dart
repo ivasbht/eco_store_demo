@@ -9,7 +9,7 @@ class CartModel extends HiveObject {
     this.quantity,
   });
 
-  factory CartModel.fromJson(Map<String, dynamic> json) {
+  factory CartModel.fromJson(dynamic json) {
     return CartModel(
       productId: json['productId'],
       quantity: json['quantity'],

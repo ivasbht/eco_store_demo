@@ -4,6 +4,5 @@ import 'package:eco_store_demo/services/core_service/local_services/local_servic
 class BaseService with DioService, LocalService {
   BaseService() {
     provideServiceObject();
-    openCartBox();
   }
 }

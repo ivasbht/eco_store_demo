@@ -14,6 +14,7 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     on<CartApiCallEvent>(_getCartDetails);
     on<CartProductApiCallEvent>(_getCartProductList);
     on<CartRemoveEvent>(_removeProductFromCart);
+    on<CartAddUpdateEvent>(_addUpdateCart);
   }
 
   List<CartModel> cartDetails = [];
@@ -27,17 +28,14 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     emit(state.copyWith(status: CartStatus.loading));
 
     try {
-      final response = await service.getUserCartList();
-      if (response.statusCode == 200) {
-        // print("Data Type : ${response.data.runtimeType} \n");
-        final data = response.data;
-        // print("\n $data");
-        (data as List).forEach((cart) {
+      cartDetails.clear();
+      final data = service.getAllCart();
+      print(data.toString());
+      if (data.isNotEmpty) {
+        data.forEach((cart) {
+          print(cart.runtimeType.toString());
           cartDetails.add(CartModel.fromJson(cart));
         });
-
-        // final List<ProductModel> products = [];
-
         emit(
           state.copyWith(
             status: CartStatus.completed,
@@ -49,7 +47,7 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
         emit(
           state.copyWith(
             status: CartStatus.error,
-            error: response.statusMessage,
+            error: "Data is empty",
           ),
         );
       }
@@ -73,16 +71,20 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
       ),
     );
     try {
-
-      String prodId = "";
-      int quantity = 0;
-
+      productsAddedInCart.clear();
+      for (CartModel cart in cartDetails) {
+        final response = await service.getSingleProducts(cart.productId.toString());
+        if (response.statusCode == 200) {
+          productsAddedInCart.add(
+              ProductModel.fromJson(response.data)..quanitity = int.tryParse(cart.quantity.toString())??0);
+        }
+      }
+      //
+      //
       emit(state.copyWith(
         cartProdStatus: CartProductStatus.completed,
         cartDetails: cartDetails,
       ));
-      //
-      //
     } catch (error) {
       print(error.toString());
       emit(state.copyWith(
@@ -97,7 +99,23 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     Emitter<CartPageState> emit,
   ) async {
     try {
-      await service.removeUserCartProduct(event.cartId);
+      await service.deleteCart(event.productId);
+      event.onCompletion();
+      emit(state);
+    } catch (error) {
+      print(error.toString());
+      emit(state.copyWith(
+        error: error,
+      ));
+    }
+  }
+
+  Future<void> _addUpdateCart(
+    CartAddUpdateEvent event,
+    Emitter<CartPageState> emit,
+  ) async {
+    try {
+      await service.addUpdateCart(event.cart);
       event.onCompletion();
       emit(state);
     } catch (error) {
