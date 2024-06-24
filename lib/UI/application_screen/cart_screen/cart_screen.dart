@@ -24,9 +24,11 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
     _cartPageBloc = CartPageBloc(service: appServices);
   }
 
-  void _callCartApi() {
-    _cartPageBloc.add(CartApiCallEvent(() {
-      _cartPageBloc..add(CartProductApiCallEvent());
+  void _callCartApi({bool isLoading = true}) {
+    _cartPageBloc.add(CartApiCallEvent(isLoading: isLoading,() {
+      _cartPageBloc..add(CartProductApiCallEvent(
+        isLoading: isLoading,
+      ));
     }));
   }
 
@@ -183,7 +185,7 @@ class _CartScreenState extends State<CartScreen> with SizeMixin {
           quantity: quantity,
         ),
         () {
-         _callCartApi();
+         _callCartApi(isLoading: false);
         },
       ),
     );

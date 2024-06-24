@@ -26,7 +26,6 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
     Emitter<CartPageState> emit,
   ) async {
     emit(state.copyWith(status: CartStatus.loading));
-
     try {
       cartDetails.clear();
       final data = service.getAllCart();
@@ -71,12 +70,23 @@ class CartPageBloc extends Bloc<CartPageEvent, CartPageState> {
       ),
     );
     try {
-      productsAddedInCart.clear();
+      if (event.isLoading) {
+        productsAddedInCart.clear();
+      }
       for (CartModel cart in cartDetails) {
-        final response = await service.getSingleProducts(cart.productId.toString());
-        if (response.statusCode == 200) {
-          productsAddedInCart.add(
-              ProductModel.fromJson(response.data)..quanitity = int.tryParse(cart.quantity.toString())??0);
+        if (event.isLoading) {
+          final response =
+              await service.getSingleProducts(cart.productId.toString());
+          if (response.statusCode == 200) {
+            productsAddedInCart.add(ProductModel.fromJson(response.data)
+              ..quanitity = int.tryParse(cart.quantity.toString()) ?? 0);
+          }
+        } else {
+          for (ProductModel prod in productsAddedInCart) {
+            if (prod.id.toString() == cart.productId.toString()) {
+              prod.quanitity = int.tryParse(cart.quantity.toString()) ?? 0;
+            }
+          }
         }
       }
       //
