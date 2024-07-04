@@ -30,7 +30,9 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
     initializaSize(context);
     _initializeHomeBloc();
     _initializeCartBloc();
-    await appServices.openCartBox();
+    await appServices.openCartBox().then((value) {
+      _cartPageBloc.add(CartApiCallEvent(() {}));
+    });
   }
 
   void _initializeHomeBloc() {
@@ -47,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
   void dispose() {
     _homePageBloc.close();
     _cartPageBloc.close();
-    // appServices.closeCart();
     super.dispose();
   }
 
@@ -62,11 +63,26 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
         ),
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.cart_screen);
-            },
-            icon: Icon(Icons.shopping_cart_outlined),
+          Badge(
+            alignment: Alignment.bottomLeft,
+            label: BlocBuilder<CartPageBloc, CartPageState>(
+              bloc: _cartPageBloc,
+              builder: (context, state) {
+                return CustomText(
+                  text: "${_cartPageBloc.cartDetails.length}",
+                  color: Colors.white,
+                );
+              },
+            ),
+            child: IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.cart_screen)
+                    .then((value) {
+                  _cartPageBloc.add(CartApiCallEvent(() {}));
+                });
+              },
+              icon: Icon(Icons.shopping_cart_outlined),
+            ),
           )
         ],
       ),
@@ -213,13 +229,13 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
       onIncrement: (quantity) {
         _updateCartBloc(
           prodId: prod.id.toString(),
-          quantity:quantity,
+          quantity: quantity,
         );
       },
       onDecrement: (quantity) {
         _updateCartBloc(
           prodId: prod.id.toString(),
-          quantity:quantity,
+          quantity: quantity,
         );
       },
     );
