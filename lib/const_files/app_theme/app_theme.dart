@@ -5,6 +5,6 @@ class AppTheme {
 
   static ThemeData appThemeData =  ThemeData(
     colorScheme:  ColorScheme.fromSeed(seedColor: Colors.lightBlueAccent),
-    useMaterial3: true,
+    useMaterial3: false,
   );
 }

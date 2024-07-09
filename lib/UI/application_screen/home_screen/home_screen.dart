@@ -184,6 +184,12 @@ class _HomeScreenState extends State<HomeScreen> with SizeMixin {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      constraints: BoxConstraints.expand(
+        height: screenHeight * 0.8,
+        width: screenWidth,
+      ),
       builder: (_) {
         return BlocBuilder<HomePageBloc, HomePageState>(
           bloc: _homePageBloc,

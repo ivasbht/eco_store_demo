@@ -23,7 +23,7 @@ class ProductDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: screenSize.width,
-      height: screenSize.height * 0.95,
+      height: screenSize.height * 0.8,
       child: _buildContent(),
     );
   }

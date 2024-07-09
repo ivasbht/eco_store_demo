@@ -2,8 +2,13 @@ import 'package:eco_store_demo/UI/initial_screen/splash_screen/splash_screen.dar
 import 'package:eco_store_demo/const_files/app_routes/app_routes.dart';
 import 'package:eco_store_demo/const_files/app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final appDocumentDirectory = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDirectory.path);
   runApp(const MyApp());
 }
 

@@ -27,7 +27,7 @@ class CustomText extends StatelessWidget {
     super.key,
     required this.text,
     this.textSpans,
-    this.color,
+    this.color=Colors.black,
     this.backgroundColor,
     this.fontSize = 16,
     this.fontWeight,
